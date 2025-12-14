@@ -1,14 +1,18 @@
 import * as model from "./model.js";
 import getWeatherView from "./views/getWeatherView.js";
 
-const getWeatherInfo = async function () {
-};
-
-const controlGetWeatherInfo = async function(){
+const controlGetWeatherInfo = async function(inputtedCity){
     getWeatherView.renderSpinner();
-    await model.fetchWeatherData();
+    // await model.fetchWeatherData();
+    try{
+        await model.fetchWeatherData(inputtedCity);
+        getWeatherView.render(model.state.data);
+    }catch(err){
+        // getWeatherView.renderError(err.message);
+        getWeatherView.renderError(err);
+        return;
+    }
 
-    getWeatherView.render(model.state.data);
 }
 
 const init = function(){

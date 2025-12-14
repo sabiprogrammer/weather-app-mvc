@@ -1,12 +1,12 @@
-import { API_URL } from "./config.js";
+import { API_URL, API_KEY } from "./config.js";
 
 export const state = {
   data: {},
 };
 
-export const fetchWeatherData = async function () {
+export const fetchWeatherData = async function (inputtedCity) {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(`${API_URL}?q=${inputtedCity}&appid=${API_KEY}&units=metric`);
     const data = await res.json();
 
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
@@ -36,5 +36,6 @@ export const fetchWeatherData = async function () {
     // return data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };

@@ -14,6 +14,27 @@ class GetWeather {
     this.#parentElement.insertAdjacentHTML("afterbegin", markup);
   }
 
+  renderError(message = "Something went wrong! Please try again.") {
+    const markup = `
+
+        <div class="search-box">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search for a city..."
+        />
+        <button id="search-btn">🔍</button>
+      </div>
+
+            <div class="error">
+                <div>⚠️</div>
+                <p>${message}</p>
+            </div>
+        `;
+    this.#parentElement.innerHTML = "";
+    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+  }
+
   renderSpinner() {
     const markup = `
                 <div class="loader" id="loader">
@@ -21,23 +42,52 @@ class GetWeather {
                     <p>Fetching weather data...</p>
                 </div>
         `;
-    
-    this.#parentElement.innerHTML = '';
-    this.#parentElement.insertAdjacentHTML('afterbegin', markup);
-  }
-  handleGetWeatherClick(handler){
-    this.#parentElement.addEventListener('click', (e) => {
-        
-        const btn = e.target.closest('#search-btn');
-        if(!btn) return;
 
-        handler();
-        
+    this.#parentElement.innerHTML = "";
+    this.#parentElement.insertAdjacentHTML("afterbegin", markup);
+  }
+  handleGetWeatherClick(handler) {
+    this.#parentElement.addEventListener("click", (e) =>
+      this.#processSubmit(e, handler)
+    );
+    this.#parentElement.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") this.#processSubmit(e, handler);
     });
   }
 
-  #generateMarkup(){
-  const iconURL = `https://openweathermap.org/img/wn/${this.#data.icon}@2x.png`;
+  #processSubmit(e, handler) {
+    let input;
+
+    // Case 1: Click on button
+    if (e.type === "click") {
+      const btn = e.target.closest("#search-btn");
+      if (!btn) return;
+
+      input = btn.closest(".search-box").querySelector("#search-input");
+    }
+
+    // Case 2: Enter key inside input
+    if (e.type === "keydown" && e.key === "Enter") {
+      if (!e.target.matches("#search-input")) return;
+      input = e.target;
+    }
+
+    if (!input) return;
+
+    const inputtedCity = input.value.trim();
+    if (!inputtedCity) {
+      alert("Please enter a city name");
+      return;
+    }
+
+    input.value = "";
+    handler(inputtedCity);
+  }
+
+  #generateMarkup() {
+    const iconURL = `https://openweathermap.org/img/wn/${
+      this.#data.icon
+    }@2x.png`;
 
     return `
 
@@ -74,7 +124,7 @@ class GetWeather {
             </div>
             </div>
         </div>
-    `
+    `;
   }
 }
 export default new GetWeather();
