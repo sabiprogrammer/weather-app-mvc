@@ -120,7 +120,7 @@ class GetWeather {
             </div>
             <div class="info">
                 <span>💨 Wind</span>
-                <h3 id="wind">${this.#data.wind} km/h</h3>
+                <h3 id="wind">${this.#data.wind} m/s</h3>
             </div>
             </div>
         </div>
